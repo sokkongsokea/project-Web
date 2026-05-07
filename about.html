@@ -1,0 +1,686 @@
+<!doctype html>
+<html
+  lang="en"
+  x-data="{ 
+    darkMode: localStorage.getItem('theme') === 'dark', 
+    mobileMenu: false,
+    cartOpen: false,
+    cart: [],
+    addToCart(item) {
+      const existing = this.cart.find(i => i.id === item.id);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        this.cart.push({ ...item, quantity: 1 });
+      }
+      this.cartOpen = true;
+    },
+    removeFromCart(index) {
+      this.cart.splice(index, 1);
+    },
+    get cartTotal() {
+      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    },
+    get cartCount() {
+      return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+  }"
+  @add-to-cart.window="addToCart($event.detail)"
+  :class="{ 'dark': darkMode }"
+  class="scroll-smooth"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sporting Store - Premium Sport Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e63946",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300 font-sans"
+  >
+    <!-- Navigation -->
+    <nav
+      class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a href="#" class="flex items-center gap-1">
+              <span class="text-2xl font-black text-primary italic"
+                >Sporting</span
+              >
+              <span class="text-2xl font-black dark:text-white">Store</span>
+            </a>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center space-x-8">
+            <a
+              href="homepage.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Home</a
+            >
+            <a
+              href="shop.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Shop</a
+            >
+            <a
+              href="about.html"
+              class="hover:text-primary font-bold transition-colors"
+              >About</a
+            >
+            <a
+              href="contect.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Contect</a
+            >
+            <a
+              href="register.html"
+              class="bg-primary text-white px-6 py-2.5 rounded-full font-black shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
+              >Register</a
+            >
+            <a
+              href="login.html"
+              class="border-2 border-slate-200 dark:border-slate-700 px-6 py-2.5 rounded-full font-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >Login</a
+            >
+
+            <!-- Theme Toggle -->
+            <button
+              @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+              class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-yellow-400 transition-all"
+            >
+              <i
+                class="fas text-xl"
+                :class="darkMode ? 'fa-sun' : 'fa-moon'"
+              ></i>
+            </button>
+          </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden flex items-center gap-2">
+            <button
+              @click="cartOpen = true"
+              class="p-2.5 text-slate-600 dark:text-white relative"
+            ></button>
+            <button
+              @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+              class="p-2.5 text-slate-600 dark:text-yellow-400"
+            >
+              <i
+                class="fas text-xl"
+                :class="darkMode ? 'fa-sun' : 'fa-moon'"
+              ></i>
+            </button>
+            <button
+              @click="mobileMenu = !mobileMenu"
+              class="p-2 text-slate-600 dark:text-white"
+            >
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Overlay -->
+      <div
+        x-show="mobileMenu"
+        class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-6 px-4 space-y-4 shadow-xl"
+        x-transition
+      >
+        <a
+          href="homepage.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Home</a
+        >
+        <a
+          href="shop.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Shopping</a
+        >
+        <a
+          href="about.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >About</a
+        >
+        <a
+          href="about.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Contect</a
+        >
+        <a
+          href="register.html"
+          class="block bg-primary text-white px-6 py-3 rounded-xl font-black text-center"
+          >Register</a
+        >
+        <a
+          href="login.html"
+          class="block border-2 border-slate-200 dark:border-slate-700 px-6 py-3 rounded-xl font-black text-center"
+          >Login</a
+        >
+      </div>
+    </nav>
+    <!-- Hero Section -->
+    <div
+      class="relative min-h-[80vh] flex items-center overflow-hidden bg-slate-900"
+    >
+      <div class="absolute inset-0 z-0">
+        <img
+          src="https://westernstudentpress.com/wp-content/uploads/2025/05/team-sports-con.jpg"
+          class="w-full h-full object-cover"
+          alt="Hero"
+        />
+        <div
+          class="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-brightness-75"
+        ></div>
+      </div>
+      <div class="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 w-full">
+        <div class="max-w-3xl py-20">
+          <h1
+            class="text-5xl md:text-8xl font-black leading-tight mb-6 uppercase italic text-white drop-shadow-2xl"
+          >
+            welcome to <br />
+            <span class="text-primary">the Love of Sports</span>
+          </h1>
+          <p
+            class="text-xl text-slate-100 mb-10 max-w-lg font-medium drop-shadow-lg"
+          >
+            Our goal is to build a community for people with the same passion, so they can connect, share opinions, and gain great experiences from sports.
+          </p>
+        </div>
+      </div>
+      <div
+        class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent"
+      ></div>
+    </div>
+    <section class="from-gray-100 to-gray-600">
+      <div class="container mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+          <div class="max-w-lg">
+            <h2
+              class="text-3xl font-extrabold from-gray-100 to-red-600 sm:text-4xl"
+            >
+              About Us
+            </h2>
+            <p class="mt-4 from-black to-white text-lg">
+              “Sporting Store” shows the effort and passion behind developing
+              this store. As a mentor and a member, I support further
+              improvements such as increasing product variety, enhancing service
+              quality, and strengthening promotion to attract more customers. I
+              believe this store can continue to grow and achieve even greater
+              success.
+            </p>
+            <div class="mt-8">
+              <a href="#" class="text-blue-500 hover:text-blue-600 font-medium"
+                >Learn more about us <span class="ml-2">&#8594;</span></a
+              >
+            </div>
+          </div>
+          <div class="mt-12 md:mt-0">
+            <img
+              src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMWFhUXGBcYFxUYFxcWGBgXFxcXGhcXFxgYHSggGholHRYVITEiJSktLi4uGB8zODMtNygtLisBCgoKDg0OGxAQGi0lICUtLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIALwBDAMBIgACEQEDEQH/xAAcAAACAgMBAQAAAAAAAAAAAAAFBgMEAQIHAAj/xABNEAACAQIEAwYCBgcEBQsFAAABAhEAAwQFEiExQVEGEyJhcYEykQcUQqGxwSNSYoLR4fAVcpLxM1NzdLMIFiQ0NUOissPS0xcmVGOT/8QAGQEAAwEBAQAAAAAAAAAAAAAAAQIDAAQF/8QAJxEAAgICAgIBAwUBAAAAAAAAAAECEQMhEjFBURMEFGEiMlKRoSP/2gAMAwEAAhEDEQA/AEbuNMVtVwpI3qu1uK52OiXDvV63dqnhLBO/AdTW964qgmZj0/ClbGUWwmjTUmmlF+0hUxp+R2IongO0CP5HoaIKDBXzrDetU/7VSvHHpWME8Hd5GtsUZU+lCreMWdjRCZFYws97DH1qdL5r1yyNZqdLQoGNRe8qlW5W4tCtxbrBKtw7irS0Izq6VZY60Uw5lRRAjdqgdzIFTNWbFuWFAwaw/htiqxEb1JcfYCquKuwKZsCRRxLSa0W3WUNb6qUJkWxWwQVgGsg0TG2gVg2hWQazWAad2KyqAVtVbEY1E4mT0HH+VYNExqI4dTxoLje0BHwgD7z/AAFBb2cXi06yPQ/lwopNmehzOGTpWjYVelJ39tX/APWGrmF7ROP9JDD5GjxYLQwthFqM4Fa2wmMtuupW9RzHrUF7H77cKBg1fw/MVVNmaMY3CXLMJeWCR4W5HynrWcsy5rkssECdt5MDc9NpHGjNV2CFydIB/VrzsQgCgcOfqfM0Rw30fFvHduEnjtTZkeA1MVPhK/FtvV3O8dasIAzgRy3Jj0FRldHXBLyc4zfsMiiVcz50nY3LLlgyeA5iupY7Nbd5CbTqwHHqPalfHtqXy4VOOWUXTHnhjJWill19HQMePOrQ0VDkWWaleOAeB8gfzooMoroON6ZUULRfAQRVX+y6ixeJGGQsfYdTWoBpisKe8NeXDHrQLFXsXc8UFFPD7P8AOqJvYq2Z1N89Q++jX5Dv0N3cHrV3KMlvYh9FuDzJJgCgWTZz3vgYabg5ciOophyvOLuHfVbPHiCJBpZWugqvI1YP6JTdUtexGlvshUnfqZPCgmbdisThkLSrovEiQYHOD/GjOG+km8og2wT5MR+VUM37c3ryNbCqitseJMeR5UrbpUNURQM9au5fbPE1SuGTRCzfUKBTClo0HzIsxgVdxGMAFUVxArGK31V+te+rP+tVz6wtbC8tEBR7i51rIt3OtXxdWsh0rGoH67gr31y50ojrSs6krGA2Lx9yI2HU0I0vd8NoE9YHD3FEcRl7Xb6Wh/3jkz0Xifun7q6ZlGQWrVsACNqVvei0IWjldrsnebc7VcXslCmW3roGMtgGFoTjWg+gqTyyLLDA5rmWANoxVEim3PV10t3rVdEJ2tnLkhT0Q2LxRgR7+nMU42MECoPGRPzpLdaduzd7Vh16rK/I7fdFPImjt2c4G3fRUuKDsD8qWsPgXthbVkwhuFXY7tp1EgAHlvx8qbb53T+7SzhPFeuSTpWSRMCSRp/A0+eKcAfTz45AuCuq5A34T1gAUgdq1vW2LbsTy2IH7u0+1HswzfRAU7sw36b70iY3OHxF9o+EEwOLEAxMecVyZLfR3QrplfJ8su33LXE0QNmgg+nUj1qhjsewLW1SdJM7x8qecs7QWVXS22lDJLD4h5HcUiXMKt6/IManAJHQkCkSt7GlqOhr7OgLYUwTq8Z9/wCQFEDc/ZNX0REUKIAAAA8hXiR1FdXGjgbtg/vP2aAZxaFy+ojZQDHqf5U2Bh1FL9y9qdrmmIBETv4TtPQ8/et0GKsmx7gpw4jak/Fg77VrneLJMsXB5BTCj75qvee4tlX3Orbfc1OSsvFpFVLhV1YbFSD9+/3U7vcFIVq6Sw1EHcSIrrmRW8KLs4gAqQNJb4R1n7q0tIn2xSTGy5WOFWBd8q7DfxeVtYFs9xpEEDwceZ9eNc5x2FwzYgiwf0fKJieceVDkrNxYFbhMfzoGc4YvpCA7xsSSPWnHN7QW2dA8RhV9SYrbLOzaWbckSx4+tSeUvHFYpnMVVoddutXxdt8dqg7R5WB40EHmORoXkl5Wbu35/D/CnhLkieSHFhs4i3WHxKkbDepf7Pt1tasW03FVIkQcASRQzH5g0hbY3NXsbcZ2W3bWWYwq9f5U25H2QW0Nd0hnI48h6UjdFYQ5HM77ss6nJPP+VQ4fMLinwtI/VO9O/aLsxaeSkq3UcPlXPMbh2tOVbiOfWmxzUgZMbgPvY7FLcuhhxCmQeIJj7uNdABMb8K432Nxnd4jvIYqEaVUSSTsAB6/ga6KM1N22+mQVHiU8VnhPyNSyakXwbjRvmWYWkaGuKD0kTQDH5habZXE/L8aFWbN3vP0aIGJ3e4Cx9gN6Lpk90+O4xI/uBD7AwQPX+dTaVWVTl0D8ZZV1O2/I0t4bC67mgmOO/SmfFWNB2mP68qHIo73V/W4owlViZIJtFj6kjIUUL3awpXw6iDANwnjqkzUHZjCkW3BPC4w+QA/KjNiyFW45AVNWx57gaj6fFA9KrdlTqtOTx72595n86pib2J9QlSOu280tswGrcLuvPpNA7ZKti5IAYp3YHJdAknz166UcbibiNrDNrH2SIG/xAAbQfU8Kjv54bia1nVuSOq7agR7fMV3Zo3Bpdnn4JVNN9FbG4k95DGCD7HzFa5RhkRTd8AddRGsalYE8CPz5VRvMLgZgOG4jiKhTN0KFGkNEetcXa0d6aUtme0dyzc8SIwYgDSJYE+T8Rz47Vr2Oy9mvSfgSCfUTpE9Z/CqOHwzXbgtWuLHj+qObHyFdSy7Kkw+HW2nqWPFm5k1TFC0SzZEnSBmbXIWa1tXpUbVpnNxdMFgD0JE1Flxbhyp2QJ8KdJoNjmFlyT8Lam9SSNvworm2OFlNTc9lHUjjHkOtLGbPcu4db1wjckoBySSpB85ANDjex4ypkOLzEXL2ygAcZj5CedRZtmtp7QWCGBOxjhy4bVXydFe4WYxwPEgHkQYojm64SJTWG3kaww++pNJHQpNoXFZY248RT5i8TFsHyH4UjZbhO8uqg3k7xwA5n5V23svm2BtQbqjUBxKaoPUbU8tEe9COt0lQdt6IZK/iY9BRXtli8JeM4dAGJkkLpHn0ml7BxbR2J6CpS/aPFfqos38avfWw0kLLkAE+Q4UbzPN/0OtAImATwnzpRyDCHFXbpFxlAhTBiRE7kb8KZ8Zbs28LpUghXB3PEjjUGdcRbxmJN46RqZuJITSvtP8AGlbF4Mpd1AwI1ehFdGOaWjbOlAs8wOPvSRm2ICbkHxSoHrTQlTpAyRTjbCdrEqyqZ4gGsN1qvk2GBAU8RwPlV++mnaumLtHFJUzbs1cBxqTG1q4ZPLxJT3jM2tpaLzqCjlv8q5XY1jE2wFVi+pVU8DIJEn2pqwWSXe6vLcOkNbJCrIVWDDSYnhx+VTnpnRiejXFdoCwLaERd4DNLe8bClXNcNcvJqa0FMSDr3jpAX86bcoynD7MwBuRJlZPsTynpVXPHEbCOO3qTP41PlTtFHFtbEbJLht3UIkMGj/F4THnDGuqYXJUsWb3dxLaZMsTzJLMx3Jrlqvou64nS4aOsEGn9+0DOrrb0xchkcnSDtEb9I9pquS2Tw0rsIYXHra0SnxQASdPp51YzHN1K6SNJ6H+POlGxgbrHW+pm4jT4wI8/hGw69aixuGv3SUmAJBJbVHERttqkefGpqPiyzm/RbvXtRZeO0+1BnaCf64UQukC8I4C3E+0SfvoPj78tt1poxIzmXnxTuukt4BwG3y86sZHiFtq6swE3CQD0Kp+c1WwNnwSarOQCfnx/ryp8MeUmieedQVjjnNswY356SQT7HjSml0i5PXiPOnHFt3m1tdQnxXDspPkOfqaAZ5kDBWZTB/VLaSY/VJjz2r0JJp2efFpqgbaxGhmA4Hl+VEuyWHsXcWvfBSoBbSdwx4CfSZ9hS3h2NtXVkgiTJ4z0qTs9eZbq3SOBk+nMfKuZQSnZ0vI3Cjq9vLsOlwmzbROO6gCR7UN7cZ+cNZVE3uuNv2RzarFi0e8DKZUiR6HcUidt8X3mKuE8EhB0hRv95NVuyOxYv4h2JLAkniTua2s5jcX4bjjlxNROwNQuKUYlfEkmTx605dl2GJwtzCkw6kshPnv8pmkY1fybMDZurcHI7+anjRRmZZ7li4ysIKkhh/XKor+JRjIWPemntMq4i4Wtr40UAnk+0x6gGk9/SllFWOpOjoXYXJO8s94pGppkxMdBRTHZSySZBikrIsyvYa13lo7Dih4MOfoacMr7S2sShE6bkbqT+HWmqNE23YEtXyzRwqzmWGcWTG4JnzrOUIA5JAPLcwB1piv4G3cTdQDyIPA1yZH4OrFHyJGQM9q46aoF0eFuWofxH4Uz4bBFk0X4CqBpZRJPWZ4GaWsxtaGAmd58O3Dry5URybtSZKOmqIInifbrUNy2dUWlplsYVBdDeIoknc7bc4G3+dKudXxcvKq8FBPuaOZznL3ZAXQvPrSqp03VJ/remhHdi5ZKqQ1ZcIKelW8yjV7UMuYgWyrfZj8asYzEhtBXcGKpi6OfL2DMfeNq7auD7BkjqJ394mm3C53r1lSwS4FW2QpaSZkHz5bmlLOFmfKB9xqr2cz76u5S4NVlz4hzU/rCtKPJaHhPh30xxu4G5ZQloBaI1mXPSFXhy57TVXE2CEUuZchi3QbDYek0xNhlKa2uArAgiNxy3pSzzMQxZbQ2jSD+JqNX0dLdKxYxABNwjqPuqXJs3NlirDVbJmOat+sv5jnWptQhHMk/dQu6d66opNUcU207OrtmIKIFDupAKLsqBSOGwkjeINVMS7IC7CDwCgbLS/2Z7SJashHO6yB6TI/ryqLHZs+IJ7oEgcSYG3Sp/G7os8y4kWLxYUn0gVFl2GLHUfYdK1tYIzL8fuFF8BbgT7mmfqJNe5dGcUdKxQ3SOdXbkuSfl6fxq/hMGNO7hJ5GSfXh/Qiu7Hi4Ro4cuZ5JWO4s3DAkLtvECB7cqH3bNtm8I1aQZY/COe7c/YVYvYk32KIYtr8TfrR+XlzqrhbwfWVXwIIVTzM7T1mJPpFXZBAvG5JaxB7sWmDESChhgOpB2CnzM+Qofe7F4hCCniVfs6lkiOoMGnLKLEKzHdnMs3M0RZp6+xge9TeNMoptC32QvNvYuqyvbEgMCDoPSeIBrn3acxibw/bbb13rsWMw8qGBhhOmJHr6j1pAzvsq152u22hmMlW2B4AlSNxw5j3qXBopzTEi3h54/d/GpDggeZ+6rl/CPZbTcUqeh5+h51ugoUNYJu5eRwM+VVipBgiKYGUVBdwykbihQSz2ffUhE8D/AJVgZRbDtruAAnYT+J5VFl/6LUZ2I57RRXDvbuJpDKTG+4kGhfsNegbnRVEVLe4QbkdTtFAbTkEFZkHaOM0z/UmuKURCzEcFE/PoPM0ydlOxncqLt4/pSQEA0tpJMeGZBbkSR6frFJ5IxWx4YpSei12fwgVBcuiGO4B4jzI61fxWKA3BFZxuDYXltJeeTsdUMs9VgAiPWPKgfaDDtbYhW1gdBB89pMiuN5E2dXxyiitmd1WRmUCQYj3mPuPzpaBly3OZ6R1FX8tvybingW/KtTheY4iQR1FNVMF2T99qA6mhONw5PiHI/dRPD7R5UXy7JrtxJRNv1iQAesTxrQu6Q06rYtXSdlO8Hb3p1ybIz3QLHSSJ0kcPnzorgchtW27x4Z+QPwr6TxPnWczxwA2H9eddMMSS/Ucs8jfQodpcrNsawZUmD5GKTMUsMa6Tdbv0e2eJWR6rwPypAzC1B+7+FZx4vRuXJbDXZUElEuMxQgqASSARwgelMWIyzTsAIpcya8vdhA36SdSiDyHM8qa7bG4kjpuPOpZY07LYpWq9CtjcNDAe3zBoTdyhjqK8oMeRpxxeWEqDz1Dh0ra7hxZstcYcx6kSBA+ZpsKtiZtIR7OSXDuYiJ23NNWFwItW9hwXc/nV/KLaMZUgj7/lV7AKEtsW+xqXfyMD7orq4nLyFfDMWOhhDbx024yfLhVl7UgAcOZ8+hHKs5hhU+rteY6WdhsOBUGQAOXI+1Q5RiLh+xqWQIYkE8Np6bRBn2gU0IRi7FyTlKKRewGGlh03/r+uoq++Htz4gCepI/jUomN4BMAKPhAEmAYE7sTMCo2uR9kfKasQ6ChcIlq2NpMsevSa1u29CsqcTcLkDkrEhZ8tjQJs7TUFuSpHBh8PuOI/rhRa3jAGNzZla2CI8QLJtB0+W8ChyDxCdvFvAGiQOm1Z+vKN4OocFbYT+BoX/akifMiOHDVvuP2RzqR8STt4Tx6xtPQn9U8q3JBpkWY4q5IYsdUztMQOXpW2JbU6FduDEcwDx9vPhWhaOJIG3AgiSJEA+RnhW9jEeIlmLEbkMoWIBgAxPCRHnQCrLV7Di7tdAKDchgCPYciOvHluQTQnH9nMKB4e8T+6dW/JQpkyem1FbN4khUjYCTt8gOpMfOquW43VinjdbfhHD4z/AKRvMzA9j1qWaahGy2GDnKhaxPZ26glUcjoVUN8kdp59KrJlF8z+guH9xh+IrruHw6tuQJNbsttOMCuRZZ1ujteCF6sTOzWQtaRC1kG84LO7BW7scraBtp6nhseO0XMb2av3mksFHQ3CY/c3Wfai1/PbCbGPWKGJ2sV3KWEa4/kDAHUkwAPepSyOT7/otDEorr+ynayy4id1h7ZRS0PeuSCx66eJCjgIjzmaMtfUHWJ0Wl0LPAtp/Ib+4oZi2uka7t8W4B8KRsPNjP3Cl04XEXkK22uFJJDPpUGf1YWSK52rdnRpKi/l+Zq+Ie87iLaNoBMksTpJPkBI96DYzNtd4aT4NUEj8vwqz/Z1+38ehgqaBB3AMTMjcbCobWSbMjadTrqX9mYDe42M1lFAbfgzm2EUXQbKjxCTp4E9T59Tzq7gMrUS18wOIUHy+0enp86p28ve2AXccSpEyQRw49Rv8qy957hhQzegJ/CinLpE3GPbDC5hZtfBaT1jxf4mk1Jcz4jgdvy/KhtjJL7SSukATLSJ8hAO9TWsgfabiARII1N5xEDrXZgU2jkzuCfonxGclht/nQnEYotO/wDlRRchWJ70z/d25xzPlUtrK7CzOu4RyPhWeQgbn58jXTwkzlc4oC5ZiNLif64zQzOsAS4CKWDAfCC0GNjtTu5w9jdhbQ+SrqPkOdQX85Z9rdox1fYfLiaZ4rVCrLTsTMky+6GhrVwEdUYfKRTVh0dNwrMDs0gyKlvYy4Fk3II3IUQI6VKXJEqRPMcm/nReJOPFmWZqXJElxiq7IWPISB955UMv5TdvkNcddI3Cgwo/ifOrtvEBufDkeIPSsd5AAnyoQxKKpGnmc3bM2sCqiNgvM8SfLbhWMzAKBE0qH4bge3qaie7CEf5VWzS5+jReRI+Z509CWWb2GDaFBWEg9TIIJIHtHvWbt1V8ShdJ59CetUXuBcQd+MN7keL+vOoFuT3qcjMfjWAEHvB10HjxB/OqC4w8G4jY1Sw98ll5xWc1I178YE1r1ZgRfaWmo8PeZT4SR1gkfOolvBhXuHrU7KUE7WcXBsCD7Rv7RRrJMTcva2Hh0byTMnpw9fnSkUI5Gm3IsVatYYqXUM0kid5PlQfQfIVTLb90Bw1sAEMN2B2ERwPKgecYk4Zpub65kISTttO8deFEbHa63aXSEd/PYD76W+0WZjFFZQqFnaQZnrScmPxQayXtDYAGq7oJYE6vDtMiOnLmaFpnF2w7FVRkLMQ4YBSCSZLb770BbCoTJLfdUtnDWF3Klj+0fyFadTVMMLg7Q+9n+3QvN3Wh9f2dKs4b/CJHuKO4zLsXcE6YB6kSPUCkDI+0j4QnuUQKTLLAE/vDcU94XtOL6B7ZgcxzB6GpPFBryXWaa9Am/wBmljVcus3ULA/GavYK9aVO7sgIvOOJ82Y8T51Fnd2V1A78x1HOgeHvRO9ck4Si6s64ZOSsYzh7C+JgHaZ8R1AHrB2mh+YZrJ/ADn5QKF4jGdSB6mKqWMwVH1Tqjhxge/CgkMF7OWX73iLlAfsgDh5kzVnDdliCGNx2MESW3E8YgDahqdqgBu4P93f22qzg+1SkcT7gijxBYXwfZuzbMsdW8iSWg9dyaOYc21XbpNKd3NS24YfOor2aQN2oqr0B3WxlxGO1NpHA7SOU7fnS1dvMF48J59OvnUGEzlOZ8+fD3FWcwtybmnfVJ2GwMQd+s/nXd9I3tM8/6xJ00S4S+xSYmIO/Awf5VHcYkAM7Kd9kgDiZ3ifcH+eXw3dWgC0yOI2k+Lhx22re6ul5Jn49uPkATHmPlXWne0cdVpkFkWEM6kk8WbUW+bb1KcdZ/wBYp9CBWFOwkmdMk7cYO3zj5VALoJ5RuSduEiNj+9RsFEv1m2ZAKj3FVkvBTEjasQpBJVQZ/VHNoHXlvVZlGqI+yTwGxkwIA8qFhouYlp8axqHEdRWiYwNVYBuRjadz5DbhVZ2IaefOhZqCBvgCKxevSVn7O8VTLbV4OK1mo27wly548B/lVMXjqJmtrt/pVU3gOdLY1E2G2Mnkap4vElmJrW7iCduVV6Ww0D0apNY51AK9depFi6t/lMivHqDVO2+1dM+h3K8tvrif7Q7qVa33feXe72IfVHiE7gVqCIC3zzrxuV9J2vo5yZkFxcNbZCNQcXbhUr1DB4jzpB+kTIcptjBjAiwWuYu0lwW7xuE2m1agRrMAmN/StxDZycvUbPX0zi/o6yW0pe7hrVtBALPduKu+w3LxSL9J+QZNZwD3MEMP34e2F7u/raC4DQusztPKtxNZx43TV3I8zNq7ufC2zD8D7VN2Lyc4zHYfDcVe4NfL9Gviuf8AhVveK+gs1+ifLHs3Vs4VbdxkYW3DXDpcqdLQWgwYrUCzljXtR8uFCfrYBICkxtINDLF5yum4zKVlWXgQV2IPuK+gcj7A5c+GsO2GBZrVtmOu4JLICTs3U0jgpdlIzcej55zTOYJVEBP6zGfaB/Gq2CxfetpuEb8IAAnzqbtzkZwWPv4czCPKE87beK2Z5+EgHzBro30JdgcPirN3FYy13ilglkEsvw73HGkidyF/daj8UapA+ad9iUcMiRNTWIJ2AinH6Y+zNjDXMIMLb7tWW8bniZp0m1p+In9ZvnVP6M8Lh72LWzibYdbisFBLLDgagZUjkrD3FS+NJ0U+WTARTyqu+Hrov0o9m7OF7h8Pb0I+tWGpj4hpK/ETxBb/AA0Z+jzsbhb+CW9iLOtnZyCWdYVToAhSNpUn3plDdAc21s46EC6j+yfvqbD5peJJkeIyYEbnyoj9IWV/V8bew9pdtQNtf2XUMqgnju2nfpXUO0XYzL8HgLlzuAbiWwofXc3utCBo1R8RBijG1dCOn2ciOMZVgGImIA58fxNDhnLM5VjcX9pXIPqQIB9+ldR7EfRqmIRcRitQttulsGGdf1mbiqnkBudjI5t3/NbIy/1fusIb3Du9a9/0/W7yfOqRcqElGJxC3jdcILtws2w3YSfnt86zduPbYIzXAx4AsZNPPbT6MhhGTF4MsbKODctMSzW1O2tG4soncGSNzJHA32H7KYPFrdvYiwLlxLxVWLOIXu7ZiFYDix+dOsjumI8aOU3btz7Wv94T+M1At8j8PhX+Fd+Xs5lL3GsqLZuiZtrfbvBHHwh5Eelc/wC3vZT6kwZGLWnDaS0alYcVJiD1B9ekl+ViONCC96enyWsLt/Gu29suyeDs4G9dtWArqqlW1OYllB2LRwJof2E7F27tr6xjEDIw/RoSVGn/AFjQQd+XlvzFa9Wbi7o5EblRPepx7TthGvsMJZRLK7BhJ7w838RMDp5b84CzdUBuVAwNdqhUamC8zUl5oJqtbcC4D6feIpXoZKwl9TCxO5mOg5/wrS7sY/CreLuoGcKZUQRPGPOPce1DblwTVdEnYAZq0rxrK1AuS268wrK1g1mY+p+x3/YVj/c//TNfNHZr/rOG/wBtY/4iV9L9jv8AsKx/uf8A6Zr5m7Nn/pWG/wBtZ/4i1hj6w7YdnEzDCvhbjsiuUJZYnwMGHEEcRXCvpQ+jWxlmHtXrV645e73ZDhIA0O0jSo38Ndu7e5Bcx2DfDWrgtOzIQ5nbS4Y/DvvEVxDtr9GGJwOEfFXsWt1LZTwfpJ8bhJGokD4qJg5/ydcjm7iMYw2QCyh/aaHue4At/wCI0/dm+073s2x+FYN3VtbfckqQpNvw34J2J1uPZax2Mw6ZVkqXLwI0WmxF4ADUXcaygkgFhKoN+Q3oRhfpuy93RO6xK62VdTLaCrqIGpiLhIAmTWMIn0pZEMPmN4jZL36dekvIuD11hz+8K7VhsyXDZbavv8FvD2mbyUIuo+wk0nfT5lerBJi1WWw7w3+zuwp/8Yt/M0Y7SH/7euf7iv8AwloGFP6f+yzXvq2LsLqcsuHYD7XeN+hM9NRZf3xXQ8nsWsusYLBLEse5WNtTi3cu3HI89Dn1YUI+iPOhjcssi5DPYIsvO/itaTbbfnp7tp6z0pdzjPu/7UYLDqfBhhdU/wC1uYe4z/Je7HqDRMR/T00NhPNb342a5/keLNi7bvLubbq8ddJBI9DEe9PH/KBeLuC/u4j8bFc9whkVGXY66O6fSnhRey1ri+Luyl5Y5j4SR+47H2o1gWTBYbC2XMf6KwPO4wj7yCaG/R3jlxWW21aG0BrDjyTZQf3Ch96Sfp77TtYfCWbRHeKTiN/slSFtNHqLnyqn5F/AX7c9nO9zrLboUlXkXDyH1Um8mr11Ee1W/pYxQb6phN4vXlLx+oCF397k/u06ZfiLeIt2cQokOi3EPQXFB/A1wP6Wu1jHM7q2wCLAS2rTwYDWx9mcj92tLoyOu/SXjnw+W3jYOhiEtqw20B2VSVI4HSTB5GK+ZTdBuFRyHEdRwivpXIs1w2eZayt/3iBL9sHx2rnGR6MAynnA8xXPbP0E3he/64ncz8Qtt3kf3Z0z5z7cqzVmTOjfRrmL4zK7D4jxsy3Lbk76xbd7ct1JCifOag+i9NNi+OP/AEht/S3aFZ7R5zhsnwVuxbIDkC1hrcyzMdjcbqATqZuu3EivfResYe6P/wBx/wCFareTGuF7DMMwbGveBHeNcW2qEHcEAM5bcb9N6B/TBnFtgmGVgXQm48fZ8JCqfMhiY6R1FTdlO2bnOcdl995U3GOGn7JRQXtDyK+If3W60h/Tj2afCYg4qySLGJLFgOCX4JceWsS/rr8qexWjvWY5emIsm1dEo2nUOoVlbSfIxB8jSZ9LObXrNhLFpCLd2Ve4NhAH+iEcJEz5AjfeCn0l4x7OVYi7aYrctrbdGHEMt22QfPccDUGQ5pYzzLTq8LMNF1R8Vm8vBknzhlJ4g78xWTM0cVdvCxXjwoWxYfEDW3aRcVgsRcw2IALIdmA0i4h+F18iPkZHEUMGfHmoI9f5UeSE4slvy3Kqpwxbf2qz/a9puKkVtbuo3wmaSfWhoreyF7xBE8fxB/Ovd7PKfOJre8wHDfrW9zDi4dchZ5LAHTgTxqkXaRKXbQuVsorAFbrUypvWhNZJqMmsYasF9ImZ2rC4e3iitlU7tU7qyYSIiSk8OczS5hrrIyuhhkYMp2MMpBB324gVCtSqK1hHL/6qZx/+Yf8A+OH/APjqvmPbjM8Yhw96+byMVJt91ZElWDLOlBtIHlQTA5c9w8CF6/wpry9FsrFtADzJ3J/Cpzm10UjFPtkub5vnOLstZxOJVrT6SyFbSzpYMsm3bB2IBieVLv8AzTvH7Vvfzb/201rjAfi28+VW0IPAz6VySz5Y9nTHDjl0U8bm+c3rLWLuNR7TpoZTbt7qREau6mfOZrXE5pm74c4Z8YpsFO7Nvu7Y/RgRp1C3q4RvM0QZawEpfusg328BPt9nMQvw3QvXSzrPyFWcqyzF4a8uIs3lW6hJV/iILKVYw6kGQx4jnTQUrBt1vupg+3gA+0V3MMY1tsXiFu93q0SqrGvTq+BBM6V49Kgw+EZeJH30cupVN0rfPNh+CKNsJn2Y4ZSmCxAsqx1MNCPqaAJ8aGNgOFA89t4zGXe+xV9btzSF1EBfCJIEIoHM8udOeDwuGeNiGjdSx+YM7j+tqt/2Ta/U+9v410R+VrTRJrGu0xZy3tNm+HtJZs40LbtqFRe7tNCjgJa2Sfc0uYrKb113uXLis7szu2/iZiWYwBG5JrpX9n2h9hflP4176tbHBF9lH8Kbjk8tC/8AP0c8ynC4nDXBdw+I7pxtqQsNuhHBh5GRTee3edFdP1u3P6ws29X/AJIn2q8+LtryPoFH8altYhXWbZk9CdJ99tqKU/5f4B8fQi3ctxd6+L9+4119Sku2tjAMwCRsOgGwo4naPMrD3BhsV3Vtm1aDbtsQdKrxdCeCijTX7kE90Z5DUCD7jf7q1S13w/SWipHX8iN/wo8Z+GC4+hFxIxRxBxhvA4jWLneABTrEQwAAXkNoipM/7bZhirTYfFYg3LZIJRrVlTKmQQVQEGRyP3U138iH2WjyIn76B5pkZI8aSB9pd48wRuPelUpx/cM4xfQNzf6QcyxFl7F7FF7TgBk7uysgEECVQEbgcDVDs32ixmDZ2wd42y4CvCowIBkSHBEiTBidz1qHFZQ6mV8S+XEeo/MVGrADan5prRLg09hPtBn+KxpQ4y8LrICFPd20IB4iUUEjbgaDMgHKpGao2Na2ZpEbL5VNgb+hwT8J2P8AGoGNRk0wowZnZAAYcCd69ggunjG9S6l+qgz9gfPYfjQgJ0NVxvVEcndg4VtNaTXqQoZJrAFeqezbBVj0j75rBMW7ZPATVzCMFOrSLgAkgyGA67THHjBFYtoGtG5wZWAEbTtMnzHURWV8VtrnBlK7jadRO5jntxHvNAwyYDG27sBGhv1G8Le3JvYk+Qq0VpPtqLi3CwEqAZG0yftDh7xPnRXIs1utdt2XOtWMS27LseDcT6GRSuHodT9hwVujRwMGvXVgn1I++tZqL2VRdtYw/aHvV2zfVuB9qDA1kVCWGL6LRytdhsxWTQyziWkDj61dd6hKDiy0ZKSMXao3KnvmqrUAmA1E8DnRXw3Nx15j+P8AXrQtaju1WGRx6ElBS7HRLiuJBkVgp50oYbFuhlTH8/6+6mrD3Cygnz/Gu7HkUzlnDiZuYZW41CtqyDMpI6lZrGZWgyEGeXv69aEJh1DbD8KTLmWN7RTFheRWmHBeB4OnsQfzqUhup9gKH3sPbVUItp4hJkSOXCruV2xIgQImBsPlTqcnTrRB0pOJHeMcSfUkx6TwrS8zjgoPWWI+Rg/fFF3QdKpJhlB8IgdAYX2HL2p3fg2gPf7lz+lTQx+0fDPo6mD86F5l2SR97bQfP842PyHrTZoHStYrcU9s1s5bmGQYiz8VtmX9ZPEPcDcUIZ67OaF51lNi4pa5aVmj4t1bb9pSD99biKzk7GtSa3xKgOwHAEgek1EaIgc+s2u4Caxq0gEb8efKh2sDnPyqnXhTRdCyVn//2Q=="
+              alt="About Us Image"
+              class="object-cover rounded-lg shadow-md"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!picture of teacher >
+    <div
+      class="p-5 border rounded text-center text-gray-500 max-w-sm justify-center mx-auto"
+    >
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          Our Mentor
+        </h2>
+
+        <div
+          class="h-1 w-20 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mb-6 rounded-full"
+        ></div>
+        <p class="text-gray-600 text-lg">
+          Guided by industry leaders who inspire excellence and innovation
+        </p>
+      </div>
+      <img
+        class="w-40 h-40 rounded-full mx-auto"
+        src="./picture/photo_2025-06-28_11-19-11.jpg"
+        alt=""
+      />
+      <div class="text-sm mt-5">
+        <a
+          href="#"
+          class="font-medium leading-none text-gray-500 hover:text-indigo-600 transition duration-500 ease-in-out"
+        >
+          Srorng Sokcheat
+        </a>
+        <p>Mentor</p>
+      </div>
+
+      <p class="mt-2 text-sm text-gray-600"></p>
+
+      <div class="flex mt-4 justify-center">
+        <a href="#" class="w-6 mx-1">
+          <svg
+            class="fill-current cursor-pointer text-gray-500 hover:text-indigo-600"
+            width="100%"
+            height="100%"
+            viewBox="0 0 24 24"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xml:space="preserve"
+            xmlns:serif="http://www.serif.com/"
+            style="
+              fill-rule: evenodd;
+              clip-rule: evenodd;
+              stroke-linejoin: round;
+              stroke-miterlimit: 2;
+            "
+          >
+            <path
+              id="Facebook"
+              d="M24,12c0,6.627 -5.373,12 -12,12c-6.627,0 -12,-5.373 -12,-12c0,-6.627
+                  5.373,-12 12,-12c6.627,0 12,5.373
+                  12,12Zm-11.278,0l1.294,0l0.172,-1.617l-1.466,0l0.002,-0.808c0,-0.422
+                  0.04,-0.648 0.646,-0.648l0.809,0l0,-1.616l-1.295,0c-1.555,0 -2.103,0.784
+                  -2.103,2.102l0,0.97l-0.969,0l0,1.617l0.969,0l0,4.689l1.941,0l0,-4.689Z"
+            ></path>
+          </svg>
+        </a>
+        <a href="#" class="w-6 mx-1">
+          <svg
+            class="fill-current cursor-pointer text-gray-500 hover:text-indigo-600"
+            width="100%"
+            height="100%"
+            viewBox="0 0 24 24"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xml:space="preserve"
+            xmlns:serif="http://www.serif.com/"
+            style="
+              fill-rule: evenodd;
+              clip-rule: evenodd;
+              stroke-linejoin: round;
+              stroke-miterlimit: 2;
+            "
+          >
+            <g id="Layer_1">
+              <circle id="Oval" cx="12" cy="12" r="12"></circle>
+              <path
+                id="Shape"
+                d="M19.05,8.362c0,-0.062 0,-0.125 -0.063,-0.187l0,-0.063c-0.187,-0.562
+                     -0.687,-0.937 -1.312,-0.937l0.125,0c0,0 -2.438,-0.375 -5.75,-0.375c-3.25,0
+                     -5.75,0.375 -5.75,0.375l0.125,0c-0.625,0 -1.125,0.375
+                     -1.313,0.937l0,0.063c0,0.062 0,0.125 -0.062,0.187c-0.063,0.625 -0.25,1.938
+                     -0.25,3.438c0,1.5 0.187,2.812 0.25,3.437c0,0.063 0,0.125
+                     0.062,0.188l0,0.062c0.188,0.563 0.688,0.938 1.313,0.938l-0.125,0c0,0
+                     2.437,0.375 5.75,0.375c3.25,0 5.75,-0.375 5.75,-0.375l-0.125,0c0.625,0
+                     1.125,-0.375 1.312,-0.938l0,-0.062c0,-0.063 0,-0.125
+                     0.063,-0.188c0.062,-0.625 0.25,-1.937 0.25,-3.437c0,-1.5 -0.125,-2.813
+                     -0.25,-3.438Zm-4.634,3.927l-3.201,2.315c-0.068,0.068 -0.137,0.068
+                     -0.205,0.068c-0.068,0 -0.136,0 -0.204,-0.068c-0.136,-0.068 -0.204,-0.204
+                     -0.204,-0.34l0,-4.631c0,-0.136 0.068,-0.273 0.204,-0.341c0.136,-0.068
+                     0.272,-0.068 0.409,0l3.201,2.316c0.068,0.068 0.136,0.204
+                     0.136,0.34c0.068,0.136 0,0.273 -0.136,0.341Z"
+                style="fill: rgb(255, 255, 255)"
+              ></path>
+            </g>
+          </svg>
+        </a>
+        <a href="#" class="w-6 mx-1">
+          <svg
+            class="fill-current cursor-pointer text-gray-500 hover:text-indigo-600"
+            width="100%"
+            height="100%"
+            viewBox="0 0 24 24"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xml:space="preserve"
+            xmlns:serif="http://www.serif.com/"
+            style="
+              fill-rule: evenodd;
+              clip-rule: evenodd;
+              stroke-linejoin: round;
+              stroke-miterlimit: 2;
+            "
+          >
+            <path
+              id="Shape"
+              d="M7.3,0.9c1.5,-0.6 3.1,-0.9 4.7,-0.9c1.6,0 3.2,0.3 4.7,0.9c1.5,0.6 2.8,1.5
+                  3.8,2.6c1,1.1 1.9,2.3 2.6,3.8c0.7,1.5 0.9,3 0.9,4.7c0,1.7 -0.3,3.2
+                  -0.9,4.7c-0.6,1.5 -1.5,2.8 -2.6,3.8c-1.1,1 -2.3,1.9 -3.8,2.6c-1.5,0.7
+                  -3.1,0.9 -4.7,0.9c-1.6,0 -3.2,-0.3 -4.7,-0.9c-1.5,-0.6 -2.8,-1.5
+                  -3.8,-2.6c-1,-1.1 -1.9,-2.3 -2.6,-3.8c-0.7,-1.5 -0.9,-3.1 -0.9,-4.7c0,-1.6
+                  0.3,-3.2 0.9,-4.7c0.6,-1.5 1.5,-2.8 2.6,-3.8c1.1,-1 2.3,-1.9
+                  3.8,-2.6Zm-0.3,7.1c0.6,0 1.1,-0.2 1.5,-0.5c0.4,-0.3 0.5,-0.8 0.5,-1.3c0,-0.5
+                  -0.2,-0.9 -0.6,-1.2c-0.4,-0.3 -0.8,-0.5 -1.4,-0.5c-0.6,0 -1.1,0.2
+                  -1.4,0.5c-0.3,0.3 -0.6,0.7 -0.6,1.2c0,0.5 0.2,0.9 0.5,1.3c0.3,0.4 0.9,0.5
+                  1.5,0.5Zm1.5,10l0,-8.5l-3,0l0,8.5l3,0Zm11,0l0,-4.5c0,-1.4 -0.3,-2.5
+                  -0.9,-3.3c-0.6,-0.8 -1.5,-1.2 -2.6,-1.2c-0.6,0 -1.1,0.2 -1.5,0.5c-0.4,0.3
+                  -0.8,0.8 -0.9,1.3l-0.1,-1.3l-3,0l0.1,2l0,6.5l3,0l0,-4.5c0,-0.6 0.1,-1.1
+                  0.4,-1.5c0.3,-0.4 0.6,-0.5 1.1,-0.5c0.5,0 0.9,0.2 1.1,0.5c0.2,0.3 0.4,0.8
+                  0.4,1.5l0,4.5l2.9,0Z"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <section class="py-20 px-4">
+      <div class="container mx-auto max-w-7xl">
+        <!-- Section Header -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2
+            class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+          >
+            Our Members
+          </h2>
+          <div
+            class="h-1 w-20 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mb-6 rounded-full"
+          ></div>
+          <p class="text-gray-600 text-lg">
+            The passionate people driving Sporting Store farward
+          </p>
+        </div>
+
+        <!-- Team Grid -->
+        <div
+          id="team-grid"
+          class="flex flex-wrap justify-center gap-8 max-w-[960px] mx-auto"
+        >
+          <!-- Team Member 1 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div class="relative overflow-hidden rounded-xl mb-4 shadow-lg">
+              <img
+                src="./picture/ChatGPT Image May 1, 2026, 01_14_39 PM.png"
+                alt="Team member"
+                class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-110 transition duration-500 ease-in-out"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                Sokea Sokkong
+              </h3>
+              <p class="text-primary font-bold">Leader</p>
+            </div>
+          </div>
+
+          <!-- Team Member 2 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div class="relative overflow-hidden rounded-xl mb-4 shadow-lg">
+              <img
+                src="./picture/cv.jpg"
+                alt="Team member"
+                class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-110 transition duration-500 ease-in-out"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                Chet Sreyneang
+              </h3>
+              <p class="text-primary font-bold">Sub leader</p>
+            </div>
+          </div>
+
+          <!-- Team Member 3 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div class="relative overflow-hidden rounded-xl mb-4 shadow-lg">
+              <img
+                src="./picture/photo_2026-05-01_12-58-57.jpg"
+                alt="Team member"
+                class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-110 transition duration-500 ease-in-out"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                Thea Sokheng
+              </h3>
+              <p class="text-primary font-bold">Member</p>
+            </div>
+          </div>
+
+          <!-- Team Member 4 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div class="relative overflow-hidden rounded-xl mb-4 shadow-lg">
+              <img
+                src="./picture/photo_2026-05-01_12-40-20.jpg"
+                alt="Team member"
+                class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-110 transition duration-500 ease-in-out"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                Dim Navin
+              </h3>
+              <p class="text-primary font-bold">Member</p>
+            </div>
+          </div>
+
+          <!-- Team Member 5 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div class="relative overflow-hidden rounded-xl mb-4 shadow-lg">
+              <img
+                src="./picture/photo_2026-05-01_13-16-26.jpg"
+                alt="Team member"
+                class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-110 transition duration-500 ease-in-out"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                Sun Rathanaksathya
+              </h3>
+              <p class="text-primary font-bold">Member</p>
+            </div>
+          </div>
+        </div>
+        <div id="no-results" class="hidden text-center py-20">
+          <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
+          <p class="text-xl text-slate-500">រកមិនឃើញសមាជិកដែលអ្នកស្វែងរកទេ</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-20 px-4">
+      <div
+        class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-b border-slate-800 pb-16 mb-8"
+      >
+        <div class="space-y-6">
+          <a href="#" class="flex items-center gap-1">
+            <span class="text-2xl font-black text-primary italic"
+              >Sporting</span
+            >
+            <span class="text-2xl font-black text-white">Store</span>
+          </a>
+          <p class="leading-relaxed">
+            Premium sports gear designed for professional performance.
+          </p>
+          <div class="flex gap-4">
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Navigation
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li>
+              <a
+                href="homepage.html"
+                class="hover:text-primary transition-colors"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="shop.html" class="hover:text-primary transition-colors"
+                >Shop</a
+              >
+            </li>
+            <li>
+              <a href="about.html" class="hover:text-primary transition-colors"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="contect.html"
+                class="hover:text-primary transition-colors"
+                >Contect</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                class="hover:text-primary transition-colors"
+                >Register</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Our Items
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Shoes & Clothing</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Badminton Gear</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Sports Balls</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Contact
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li class="flex items-center gap-3">
+              <i class="fas fa-phone text-primary"></i> 0965675923
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-envelope text-primary"></i>
+              chetsreyneang789@gmail.com
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-center font-black uppercase text-xs tracking-[0.3em]">
+        &copy; 2026 Sporting Store. ALL RIGHTS RESERVED.
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search-input");
+        const teamGrid = document.getElementById("team-grid");
+        const memberCards = document.querySelectorAll(".team-member-card");
+        const noResults = document.getElementById("no-results");
+
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            let hasResults = false;
+
+            memberCards.forEach((card) => {
+              const name = card.querySelector("h3").textContent.toLowerCase();
+              const role = card.querySelector("p").textContent.toLowerCase();
+
+              if (name.includes(term) || role.includes(term)) {
+                card.style.display = "block";
+                hasResults = true;
+              } else {
+                card.style.display = "none";
+              }
+            });
+
+            if (hasResults) {
+              teamGrid.classList.add("flex");
+              teamGrid.classList.remove("hidden");
+              noResults.classList.add("hidden");
+            } else {
+              teamGrid.classList.remove("flex");
+              teamGrid.classList.add("hidden");
+              noResults.classList.remove("hidden");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

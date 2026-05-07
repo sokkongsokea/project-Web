@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' }" :class="{ 'dark': darkMode }">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sporting Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#e63946',
+            }
+          }
+        }
+      }
+    </script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center min-h-screen p-6">
+    <!-- Theme Toggle -->
+    <button
+      @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+      class="fixed top-6 right-6 p-3 rounded-full bg-white dark:bg-slate-800 shadow-xl text-slate-600 dark:text-yellow-300 transition-all hover:scale-110"
+    >
+      <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+    </button>
+
+    <div class="bg-white dark:bg-slate-800 p-8 md:p-12 rounded-[2.5rem] shadow-2xl w-full max-w-lg border border-gray-100 dark:border-slate-700 relative overflow-hidden transition-colors">
+      <div class="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+      
+      <div class="text-center mb-10">
+        <h1 class="text-3xl font-black dark:text-white mb-2 italic uppercase">Welcome Back</h1>
+        <p class="text-slate-500 dark:text-slate-400 font-medium">Log in to your Sporting Store account</p>
+      </div>
+
+      <form action="#" class="space-y-6">
+        <div class="space-y-2">
+          <label class="block text-xs font-black uppercase tracking-widest ml-1 dark:text-slate-400">Email Address</label>
+          <input type="email" class="w-full p-4 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-sm focus:ring-4 focus:ring-primary/20 outline-none transition-all dark:text-white font-bold" placeholder="you@example.com" required />
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center px-1">
+            <label class="block text-xs font-black uppercase tracking-widest dark:text-slate-400">Password</label>
+            <a href="#" class="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Forgot?</a>
+          </div>
+          <input type="password" class="w-full p-4 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-sm focus:ring-4 focus:ring-primary/20 outline-none transition-all dark:text-white font-bold" placeholder="••••••••" required />
+        </div>
+        
+        <div class="flex items-center gap-3 px-1">
+          <input type="checkbox" id="remember" class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary">
+          <label for="remember" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest cursor-pointer">Remember me</label>
+        </div>
+
+        <button type="submit" class="w-full bg-primary hover:brightness-110 text-white font-black py-4 rounded-2xl shadow-xl shadow-primary/30 transition-all transform hover:-translate-y-1 uppercase italic tracking-widest">
+          Login to Account
+        </button>
+      </form>
+
+      <div class="mt-8 text-center border-t border-gray-100 dark:border-slate-700 pt-8">
+        <p class="text-sm text-slate-500 dark:text-slate-400 font-bold mb-4 uppercase tracking-widest">New to the store?</p>
+        <a href="register.html" class="inline-block text-primary font-black hover:underline uppercase tracking-widest mb-6">Create an Account</a>
+        <br>
+        <a href="homepage.html" class="inline-flex items-center gap-2 text-xs font-black text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Home</span>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

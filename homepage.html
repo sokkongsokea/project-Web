@@ -1,0 +1,939 @@
+<!doctype html>
+<html
+  lang="en"
+  x-data="{ 
+    darkMode: localStorage.getItem('theme') === 'dark', 
+    mobileMenu: false,
+    cartOpen: false,
+    cart: [],
+    addToCart(item) {
+      const existing = this.cart.find(i => i.id === item.id);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        this.cart.push({ ...item, quantity: 1 });
+      }
+      this.cartOpen = true;
+    },
+    removeFromCart(index) {
+      this.cart.splice(index, 1);
+    },
+    get cartTotal() {
+      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    },
+    get cartCount() {
+      return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+  }"
+  @add-to-cart.window="addToCart($event.detail)"
+  :class="{ 'dark': darkMode }"
+  class="scroll-smooth"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sporting Store - Premium Sport Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e63946",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300 font-sans"
+  >
+    <!-- Navigation -->
+    <nav
+      class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a href="#" class="flex items-center gap-1">
+              <span class="text-2xl font-black text-primary italic"
+                >Sporting</span
+              >
+              <span class="text-2xl font-black dark:text-white">Store</span>
+            </a>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center space-x-8">
+            <a
+              href="homepage.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Home</a
+            >
+            <a
+              href="shop.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Shop</a
+            >
+            <a
+              href="about.html"
+              class="hover:text-primary font-bold transition-colors"
+              >About</a
+            >
+            <a
+              href="contect.html"
+              class="hover:text-primary font-bold transition-colors"
+              >Contect</a
+            >
+            <a
+              href="register.html"
+              class="bg-primary text-white px-6 py-2.5 rounded-full font-black shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
+              >Register</a
+            >
+            <a
+              href="login.html"
+              class="border-2 border-slate-200 dark:border-slate-700 px-6 py-2.5 rounded-full font-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >Login</a
+            >
+
+            <!-- Theme Toggle -->
+            <button
+              @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+              class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-yellow-400 transition-all"
+            >
+              <i
+                class="fas text-xl"
+                :class="darkMode ? 'fa-sun' : 'fa-moon'"
+              ></i>
+            </button>
+          </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden flex items-center gap-2">
+            <button
+              @click="cartOpen = true"
+              class="p-2.5 text-slate-600 dark:text-white relative"
+            ></button>
+            <button
+              @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+              class="p-2.5 text-slate-600 dark:text-yellow-400"
+            >
+              <i
+                class="fas text-xl"
+                :class="darkMode ? 'fa-sun' : 'fa-moon'"
+              ></i>
+            </button>
+            <button
+              @click="mobileMenu = !mobileMenu"
+              class="p-2 text-slate-600 dark:text-white"
+            >
+              <i class="fas fa-bars text-2xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Overlay -->
+      <div
+        x-show="mobileMenu"
+        class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-6 px-4 space-y-4 shadow-xl"
+        x-transition
+      >
+        <a
+          href="homepage.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Home</a
+        >
+        <a
+          href="shop.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Shopping</a
+        >
+        <a
+          href="about.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >About</a
+        >
+        <a
+          href="about.html"
+          @click="mobileMenu = false"
+          class="block hover:text-primary font-bold transition-colors"
+          >Contect</a
+        >
+        <a
+          href="register.html"
+          class="block bg-primary text-white px-6 py-3 rounded-xl font-black text-center"
+          >Register</a
+        >
+        <a
+          href="login.html"
+          class="block border-2 border-slate-200 dark:border-slate-700 px-6 py-3 rounded-xl font-black text-center"
+          >Login</a
+        >
+      </div>
+    </nav>
+    <!-- Hero Section -->
+    <div
+      class="relative min-h-[80vh] flex items-center overflow-hidden bg-slate-900"
+    >
+      <div class="absolute inset-0 z-0">
+        <img
+          src="https://i.pinimg.com/1200x/39/4a/85/394a8514c21be4c0fc80e3d2a9879019.jpg"
+          class="w-full h-full object-cover"
+          alt="Hero"
+        />
+        <div
+          class="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-brightness-75"
+        ></div>
+      </div>
+      <div class="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 w-full">
+        <div class="max-w-3xl py-20">
+          <h1
+            class="text-5xl md:text-8xl font-black leading-tight mb-6 uppercase italic text-white drop-shadow-2xl"
+          >
+           Welcome to <br />
+            <span class="text-primary">Sporting Store</span>
+          </h1>
+          <p
+            class="text-xl text-slate-100 mb-10 max-w-lg font-medium drop-shadow-lg"
+          >
+            Sports lovers can trust and visit our Sporting Store for high-quality equipment and reliable service.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a
+              href="#shop"
+              class="bg-primary text-white font-black text-lg px-10 py-4 rounded-2xl shadow-xl shadow-primary/30 hover:brightness-110 transition-all text-center"
+              >Explore Shop</a
+            >
+            <a
+              href="register.html"
+              class="border-2 border-white text-white hover:bg-white hover:text-slate-900 font-black text-lg px-10 py-4 rounded-2xl transition-all text-center"
+              >Join Us</a
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent"
+      ></div>
+    </div>
+    <!-- Why Choose Us -->
+    <section class="py-20 max-w-7xl mx-auto px-4 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div
+          class="flex flex-col items-center text-center p-8 rounded-[3rem] bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800"
+        >
+          <div
+            class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-6"
+          >
+            <i class="fas fa-shipping-fast text-4xl"></i>
+          </div>
+          <h3 class="text-2xl font-black mb-4 uppercase italic">
+            Fast Delivery
+          </h3>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">
+            Free shipping on all orders over $100. We deliver to your doorstep
+            within 48 hours.
+          </p>
+        </div>
+
+        <div
+          class="flex flex-col items-center text-center p-8 rounded-[3rem] bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800"
+        >
+          <div
+            class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-6"
+          >
+            <i class="fas fa-shield-alt text-4xl"></i>
+          </div>
+          <h3 class="text-2xl font-black mb-4 uppercase italic">
+            Secure Payment
+          </h3>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">
+            100% secure payment processing with industry-leading encryption and
+            protection.
+          </p>
+        </div>
+
+        <div
+          class="flex flex-col items-center text-center p-8 rounded-[3rem] bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800"
+        >
+          <div
+            class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-6"
+          >
+            <i class="fas fa-exchange-alt text-4xl"></i>
+          </div>
+          <h3 class="text-2xl font-black mb-4 uppercase italic">
+            Easy Returns
+          </h3>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">
+            Not happy with your purchase? Return it within 30 days for a full
+            refund, no questions asked.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section
+      id="about"
+      class="py-20 bg-slate-900 text-white overflow-hidden relative"
+    >
+      <div
+        class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none"
+      >
+        <i class="fas fa-running text-[30rem] -rotate-12 translate-x-1/2"></i>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div class="relative">
+            <div
+              class="absolute -top-10 -left-10 w-40 h-40 bg-primary rounded-full blur-[100px] opacity-20"
+            ></div>
+            <h2
+              class="text-5xl md:text-7xl font-black uppercase italic mb-8 leading-tight"
+            >
+              More than just <br />
+              <span class="text-primary">A Sport Store</span>
+            </h2>
+            <p class="text-xl text-slate-300 mb-10 leading-relaxed font-medium">
+              Since 2010, Sporting Store has been the leading destination for
+              athletes and fitness enthusiasts. We believe that everyone
+              deserves high-quality equipment to reach their full potential.
+            </p>
+            <div class="grid grid-cols-2 gap-8 mb-10">
+              <div>
+                <p class="text-4xl font-black text-primary mb-1 italic">
+                  150K+
+                </p>
+                <p
+                  class="text-slate-400 uppercase font-bold text-sm tracking-wider"
+                >
+                  Happy Customers
+                </p>
+              </div>
+              <div>
+                <p class="text-4xl font-black text-primary mb-1 italic">50+</p>
+                <p
+                  class="text-slate-400 uppercase font-bold text-sm tracking-wider"
+                >
+                  World Brands
+                </p>
+              </div>
+            </div>
+            <a
+              href="#"
+              class="inline-block bg-white text-slate-900 px-10 py-4 rounded-2xl font-black text-lg hover:bg-primary hover:text-white transition-all"
+              >Learn Our Story</a
+            >
+          </div>
+          <div
+            class="relative h-[500px] rounded-[3rem] overflow-hidden group shadow-2xl"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+              class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              alt="About Us"
+            />
+            <div
+              class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-all"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Special Promo Banner -->
+    <section class="py-10">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div
+          class="relative rounded-[3rem] overflow-hidden bg-primary p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl shadow-primary/40"
+        >
+          <div class="relative z-10 text-center md:text-left">
+            <span
+              class="bg-white/20 text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-6 inline-block"
+              >Limited Time Offer</span
+            >
+            <h2
+              class="text-4xl md:text-6xl font-black text-white uppercase italic leading-tight mb-6"
+            >
+              Summer Sale <br />
+              <span class="text-slate-900">Up to 50% Off</span>
+            </h2>
+            <p class="text-white/80 text-lg font-medium mb-10 max-w-md">
+              Don't miss out on our biggest sale of the season. Premium gear at
+              unbeatable prices.
+            </p>
+            <a
+              href="shop.html"
+              class="inline-block bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-white hover:text-slate-900 transition-all"
+              >Shop the Sale</a
+            >
+          </div>
+          <div class="relative z-10 w-full md:w-1/2 flex justify-center">
+            <img
+              src="https://images.unsplash.com/photo-1552346154-21d32810aba3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              class="w-full max-w-md drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] -rotate-12 hover:rotate-0 transition-transform duration-700"
+              alt="Promo Shoe"
+            />
+          </div>
+          <!-- Background decoration -->
+          <div
+            class="absolute top-0 right-0 w-1/2 h-full bg-white/5 -skew-x-12 translate-x-1/4"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Showcase Slider -->
+    <section class="py-20 border-t border-slate-100 dark:border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-12">
+          <p
+            class="text-slate-400 font-black uppercase tracking-[0.3em] text-xs"
+          >
+            Our Official Partners
+          </p>
+        </div>
+        <div
+          class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all"
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+            class="h-8 md:h-12 dark:invert"
+            alt="Nike"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
+            class="h-10 md:h-16 dark:invert"
+            alt="Adidas"
+          />
+          <img
+            src="data:image/jpeg;base64,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"
+            class="h-8 md:h-12 dark:invert"
+            alt="Puma"
+          />
+          <img
+            src="data:image/png;base64,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"
+            class="h-6 md:h-10 dark:invert"
+            alt="Reebok"
+          />
+          <img
+            src="data:image/png;base64,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"
+            class="h-10 md:h-16 dark:invert"
+            alt="Under Armour"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section
+      class="py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800"
+    >
+      <div class="max-w-4xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-black uppercase italic mb-4">
+            Frequently Asked <span class="text-primary">Questions</span>
+          </h2>
+          <div class="h-1.5 w-24 bg-primary rounded-full mx-auto"></div>
+        </div>
+
+        <div class="space-y-4" x-data="{ active: null }">
+          <!-- FAQ 1 -->
+          <div
+            class="border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden"
+          >
+            <button
+              @click="active = active === 1 ? null : 1"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+            >
+              <span class="font-black uppercase italic"
+                >How long does shipping take?</span
+              >
+              <i
+                class="fas fa-chevron-down transition-transform duration-300"
+                :class="active === 1 ? 'rotate-180' : ''"
+              ></i>
+            </button>
+            <div
+              x-show="active === 1"
+              x-collapse
+              class="p-6 pt-0 text-slate-500 dark:text-slate-400 font-medium"
+            >
+              We offer express 48-hour delivery for all orders. Standard
+              shipping typically takes 3-5 business days depending on your
+              location.
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div
+            class="border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden"
+          >
+            <button
+              @click="active = active === 2 ? null : 2"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+            >
+              <span class="font-black uppercase italic"
+                >What is your return policy?</span
+              >
+              <i
+                class="fas fa-chevron-down transition-transform duration-300"
+                :class="active === 2 ? 'rotate-180' : ''"
+              ></i>
+            </button>
+            <div
+              x-show="active === 2"
+              x-collapse
+              class="p-6 pt-0 text-slate-500 dark:text-slate-400 font-medium"
+            >
+              We have a 30-day "no questions asked" return policy. Items must be
+              in their original packaging and condition.
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div
+            class="border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden"
+          >
+            <button
+              @click="active = active === 3 ? null : 3"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+            >
+              <span class="font-black uppercase italic"
+                >Do you offer international shipping?</span
+              >
+              <i
+                class="fas fa-chevron-down transition-transform duration-300"
+                :class="active === 3 ? 'rotate-180' : ''"
+              ></i>
+            </button>
+            <div
+              x-show="active === 3"
+              x-collapse
+              class="p-6 pt-0 text-slate-500 dark:text-slate-400 font-medium"
+            >
+              Yes, we ship to over 50 countries worldwide. Shipping costs and
+              delivery times vary by destination.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Our Team Section -->
+    <section class="py-20 bg-white dark:bg-slate-900">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black uppercase italic mb-4">
+            Meet Our <span class="text-primary">Experts</span>
+          </h2>
+          <p
+            class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto"
+          >
+            Our team consists of former professional athletes and equipment
+            specialists dedicated to helping you find the perfect gear.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-8 max-w-[960px] mx-auto">
+          <!-- Team Member 1 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div
+              class="relative h-96 rounded-[3rem] overflow-hidden mb-6 shadow-xl"
+            >
+              <img
+                src="./picture/ChatGPT Image May 1, 2026, 01_14_39 PM.png"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                alt="Team 1"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
+              ></div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-2xl font-black uppercase italic">
+                Sokea Sokkong
+              </h3>
+              <p
+                class="text-primary font-bold uppercase tracking-widest text-sm"
+              >
+                Leader
+              </p>
+            </div>
+          </div>
+
+          <!-- Team Member 2 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div
+              class="relative h-96 rounded-[3rem] overflow-hidden mb-6 shadow-xl"
+            >
+              <img
+                src="./picture/cv.jpg"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                alt="Team 2"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
+              ></div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-2xl font-black uppercase italic">
+                Chet Sreyneang
+              </h3>
+              <p
+                class="text-primary font-bold uppercase tracking-widest text-sm"
+              >
+                Sub leader
+              </p>
+            </div>
+          </div>
+
+          <!-- Team Member 3 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div
+              class="relative h-96 rounded-[3rem] overflow-hidden mb-6 shadow-xl"
+            >
+              <img
+                src="./picture/photo_2026-05-01_12-58-57.jpg"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                alt="Team 3"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
+              >
+                <div class="flex gap-4"></div>
+              </div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-2xl font-black uppercase italic">Thea Sokheng</h3>
+              <p
+                class="text-primary font-bold uppercase tracking-widest text-sm"
+              >
+                Member
+              </p>
+            </div>
+          </div>
+
+          <!-- Team Member 4 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div
+              class="relative h-96 rounded-[3rem] overflow-hidden mb-6 shadow-xl"
+            >
+              <img
+                src="./picture/photo_2026-05-01_12-40-20.jpg"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                alt="Team 4"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
+              >
+                <div class="flex gap-4"></div>
+              </div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-2xl font-black uppercase italic">Dim Navin</h3>
+              <p
+                class="text-primary font-bold uppercase tracking-widest text-sm"
+              >
+                Member
+              </p>
+            </div>
+          </div>
+          <!-- Team Member 5 -->
+          <div class="team-member-card group w-full sm:w-60">
+            <div
+              class="relative h-96 rounded-[3rem] overflow-hidden mb-6 shadow-xl"
+            >
+              <img
+                src="./picture/photo_2026-05-01_13-16-26.jpg"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                alt="Team 4"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
+              >
+                <div class="flex gap-4"></div>
+              </div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-2xl font-black uppercase italic">
+                Sun Rathanaksathya
+              </h3>
+              <p
+                class="text-primary font-bold uppercase tracking-widest text-sm"
+              >
+                Member
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Us Section -->
+    <section id="contact" class="py-20 bg-slate-50 dark:bg-slate-900/50">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 class="text-5xl font-black uppercase italic mb-8 leading-tight">
+              Get in <span class="text-primary">Touch</span>
+            </h2>
+            <p
+              class="text-xl text-slate-600 dark:text-slate-400 mb-10 font-medium"
+            >
+              Have a question about our gear? Want to track an order? Our team
+              is here to help you 24/7.
+            </p>
+            <div class="space-y-6">
+              <div class="flex items-center gap-6">
+                <div
+                  class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-primary/20"
+                >
+                  <i class="fas fa-phone"></i>
+                </div>
+                <div>
+                  <p
+                    class="text-slate-400 text-sm font-bold uppercase tracking-widest"
+                  >
+                    Call Us
+                  </p>
+                  <p class="text-xl font-black italic">0965675923</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-6">
+                <div
+                  class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-primary/20"
+                >
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div>
+                  <p
+                    class="text-slate-400 text-sm font-bold uppercase tracking-widest"
+                  >
+                    Email Us
+                  </p>
+                  <p class="text-xl font-black italic">
+                    chetsreyneang789@gmail.com
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-6">
+                <div
+                  class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-primary/20"
+                >
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                  <p
+                    class="text-slate-400 text-sm font-bold uppercase tracking-widest"
+                  >
+                    Visit Us
+                  </p>
+                  <p class="text-xl font-black italic">
+                    Vilage 13, No 40, Street 273, Phnom Penh 12151
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white dark:bg-slate-800 p-8 md:p-12 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-700"
+          >
+            <form class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label
+                    class="block text-xs font-black uppercase tracking-widest ml-1 text-slate-400"
+                    >Name</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full p-4 bg-slate-100 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold transition-all"
+                    placeholder="Your Name"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="block text-xs font-black uppercase tracking-widest ml-1 text-slate-400"
+                    >Email</label
+                  >
+                  <input
+                    type="email"
+                    class="w-full p-4 bg-slate-100 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold transition-all"
+                    placeholder="Email Address"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="block text-xs font-black uppercase tracking-widest ml-1 text-slate-400"
+                  >Message</label
+                >
+                <textarea
+                  rows="4"
+                  class="w-full p-4 bg-slate-100 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold transition-all"
+                  placeholder="How can we help?"
+                ></textarea>
+              </div>
+              <button
+                class="w-full bg-primary text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-primary/20 hover:brightness-110 transition-all uppercase italic"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-20 px-4">
+      <div
+        class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-b border-slate-800 pb-16 mb-8"
+      >
+        <div class="space-y-6">
+          <a href="#" class="flex items-center gap-1">
+            <span class="text-2xl font-black text-primary italic"
+              >Sporting</span
+            >
+            <span class="text-2xl font-black text-white">Store</span>
+          </a>
+          <p class="leading-relaxed">
+            Premium sports gear designed for professional performance.
+          </p>
+          <div class="flex gap-4">
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="#"
+              class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Navigation
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li>
+              <a
+                href="homepage.html"
+                class="hover:text-primary transition-colors"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="shop.html" class="hover:text-primary transition-colors"
+                >Shop</a
+              >
+            </li>
+            <li>
+              <a href="about.html" class="hover:text-primary transition-colors"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="contect.html"
+                class="hover:text-primary transition-colors"
+                >Contect</a
+              >
+            </li>
+            <li>
+              <a
+                href="register.html"
+                class="hover:text-primary transition-colors"
+                >Register</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Our Items
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Shoes & Clothing</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Badminton Gear</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-primary transition-colors"
+                >Sports Balls</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-white font-black text-lg mb-8 uppercase italic tracking-widest"
+          >
+            Contact
+          </h4>
+          <ul class="space-y-4 font-bold">
+            <li class="flex items-center gap-3">
+              <i class="fas fa-phone text-primary"></i> 0965675923
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-envelope text-primary"></i>
+              chetsreyneang789@gmail.com
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-center font-black uppercase text-xs tracking-[0.3em]">
+        &copy; 2026 Sporting Store. ALL RIGHTS RESERVED.
+      </div>
+    </footer>
+  </body>
+</html>
